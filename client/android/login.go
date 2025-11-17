@@ -32,7 +32,7 @@ type ErrListener interface {
 // URLOpener it is a callback interface. The Open function will be triggered if
 // the backend want to show an url for the user
 type URLOpener interface {
-	Open(string)
+	Open(url string, userCode string)
 	OnLoginSuccess()
 }
 
@@ -210,7 +210,7 @@ func (a *Auth) foregroundGetTokenInfo(urlOpener URLOpener) (*auth.TokenInfo, err
 		return nil, fmt.Errorf("getting a request OAuth flow info failed: %v", err)
 	}
 
-	go urlOpener.Open(flowInfo.VerificationURIComplete)
+	go urlOpener.Open(flowInfo.VerificationURIComplete, flowInfo.UserCode)
 
 	waitTimeout := time.Duration(flowInfo.ExpiresIn) * time.Second
 	waitCTX, cancel := context.WithTimeout(a.ctx, waitTimeout)
